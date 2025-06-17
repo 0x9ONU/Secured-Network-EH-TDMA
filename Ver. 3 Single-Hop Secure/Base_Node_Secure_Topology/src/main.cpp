@@ -74,6 +74,7 @@ void baseFSM(){
         while(!myFlags.is_ack) {
           receive();
           cycleTime();
+          // If all nodes are dead or no ack was received during a whole cycle, break and start from the top
           if(myFlags.all_nodes_dead) {
             break;
           }
@@ -145,7 +146,7 @@ unsigned long cycleTime() {
   static unsigned long last_time;
   unsigned long time = millis() % CYCLE_LENGTH;
   if(last_time > time){ // checks if the clock reset and resets is_sent and sets all nodes dead
-    if (!myFlags.is_sent) {
+    if (!myFlags.is_sent || (!myFlags.is_ack && state == SYNC)) {
       myFlags.all_nodes_dead = true;
     }
     myFlags.is_sent = false;
