@@ -4,7 +4,7 @@
 enum states {ACTIVE, DEAD}; 
 
 //Constants and Assumptions
-const PROGMEM int ENERGY_CHANCE = 0;                               // energy harvest rate
+const PROGMEM int ENERGY_CHANCE = 101;                               // energy harvest te
 
 //Setup data structures and global variables
 states state;

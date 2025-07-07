@@ -12,7 +12,7 @@ struct flags {
 };
 
 //Setup Ennumerations to Closely Match the FSM and Pseudocode
-enum states {CAPTURE, ACTIVE, DEAD}; 
+enum states {WAIT, CAPTURE, ACTIVE, DEAD}; 
 
 //Constants and Assumptions
 //const String NODES[] = {"BB"};
@@ -22,7 +22,8 @@ const PROGMEM int TIME_SLOT = 1000;                                  // amount o
 const PROGMEM unsigned long CYCLE_LENGTH = (TOTAL_NODES+1) * TIME_SLOT; // total length of one cycle
 const PROGMEM int ERROR = 70;                                       // Transmission time error threshold
 const PROGMEM int ENERGY_CHANCE = 101;                               // energy harvest rate
-
+const PROGMEM unsigned long DELAY = 10000;                                    // The delay the node waits to burst send the packets (in ms)
+const PROGMEM int INTERVAL = 10;                                    // The delay for how fast the program sends the packets for burstSend
 //Setup data structures and global variables
 states state;
 flags myFlags;
@@ -110,11 +111,15 @@ void baseFSM(){
       if(sync_packet_queue_position > QUEUE_SIZE - 1 || 
         ack_packet_queue_position > QUEUE_SIZE - 1 ||
         data_packet_queue_position > QUEUE_SIZE - 1) {
-          state = ACTIVE; //If at least one queue has more than PACKETS_HELD packets
+          state = WAIT; //If at least one queue has more than PACKETS_HELD packets
         }
       break;
     }
-
+    case(WAIT): {
+            delay(DELAY);
+            state = ACTIVE;
+            break;
+        }
     case ACTIVE: {
       // See if energy is available
       bool isenergyAvailible = energyAvailible();
@@ -223,6 +228,7 @@ void burstSend(String queue[], int& i) {
   for(int j = 0; j < i; j++) {
     send(queue[j]);
     queue[j] = "";
+    delay(INTERVAL);
   }
   i = 0;
 }
