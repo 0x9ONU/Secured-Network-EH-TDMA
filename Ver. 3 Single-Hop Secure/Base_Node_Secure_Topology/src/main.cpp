@@ -3,9 +3,9 @@
 //Constants and Assumptions
 const String NODES[] = {"01", "02", "03"};                      //Nodes in the network
 const PROGMEM int TOTAL_NODES = 3;                                 // Total number of nodes in the network
-const PROGMEM int TIME_SLOT = 1000;                                  // amount of time per slot in milliseconds (ms) 10^-3
+const PROGMEM int TIME_SLOT = 500;                                  // amount of time per slot in milliseconds (ms) 10^-3
 const PROGMEM unsigned long CYCLE_LENGTH = (TOTAL_NODES+1) * TIME_SLOT; // total length of one cycle
-const PROGMEM int ERROR = 70;                                       // Transmission time error threshold
+const PROGMEM int ERROR = 150;                                       // Transmission time error threshold
 const PROGMEM int ENERGY_CHANCE = 101;                               // energy harvest rate
 const PROGMEM int TRANSMIT_TIME = TIME_SLOT * TOTAL_NODES + (TIME_SLOT / 2); 
 
@@ -13,12 +13,14 @@ const PROGMEM int TRANSMIT_TIME = TIME_SLOT * TOTAL_NODES + (TIME_SLOT / 2);
 struct flags {
   String ID = "BB";
   String data[TOTAL_NODES];
+  String last_sender = "XX";
   bool is_sent = 0;                     //Was a packet sent during the cycle?
   bool all_nodes_dead = 0;              // true when all the nodes are dead (is_sent was never set to true during the cycle length)
   long time_sent = 0;                   // the time the previous node sent the message
   unsigned long time_in = 0;            // local arrival time, then converted to global arrival time, ideally the same as time_sent
   unsigned long last_packet_in = 0;     // used for checking if we are not getting messages. if no messages in 3 cycles, reset the network
   bool is_ack = 0;                      // Checks if acknowledgements have been received
+  bool is_data = 0;
   bool sent_sync = 0;                   // Checks if a sync was sent recently
 };
 //Setup Ennumerations to Closely Match the FSM and Pseudocode
@@ -90,10 +92,17 @@ void baseFSM(){
       cycleTime(); // Call cycle time to check for out-of-energy errors
 
       //ERRORS
-      if((myFlags.time_in > myFlags.time_sent + (TIME_SLOT/2) - ERROR || myFlags.time_in < myFlags.time_sent - (TIME_SLOT/2) || myFlags.all_nodes_dead) && myFlags.sent_sync == false) {
+
+      /*
+      if((myFlags.time_in > myFlags.time_sent + (TIME_SLOT/2) + ERROR || myFlags.time_in < myFlags.time_sent - (TIME_SLOT/2) - ERROR || myFlags.all_nodes_dead) && myFlags.sent_sync == false) {
         state = SYNC;
       }
       break;
+      */
+     if(((myFlags.time_in < (myFlags.last_sender.toInt()-1)*TIME_SLOT) || (myFlags.time_in > myFlags.last_sender.toInt()*TIME_SLOT) || myFlags.all_nodes_dead) && !myFlags.sent_sync && myFlags.is_data) {
+      while(cycleTime()) {} //Wait until cycleTime is zero
+      state = SYNC;
+     }
     }
   }
 }
@@ -121,6 +130,7 @@ bool receive() {
       if(isHearable(sender)) {
       //Debug
       //Serial.println("I GOT THE DATA");
+      myFlags.last_sender=sender;
       myFlags.all_nodes_dead = false;                                // All nodes are not dead if you get here lol
       myFlags.is_sent = true;                                        // Sets the is_sent to true as a packet was received
       myFlags.last_packet_in = millis();                             // Get current time
@@ -131,6 +141,9 @@ bool receive() {
       Serial.readStringUntil(':');                                   // ACK Flag
       myFlags.is_ack = Serial.parseInt();                            // Reads in String as a Integer and saves if an acknowledgement has been received
       myFlags.data[idToNode(sender)] = Serial.readStringUntil('\n').substring(1); // Data
+      if(myFlags.data->length() > 0) {
+        myFlags.is_data = true;
+      }
       //Debug
       //Serial.println(myFlags.data[idToNode(sender)]);
     }

@@ -22,7 +22,7 @@ const PROGMEM int TIME_SLOT = 1000;                                  // amount o
 const PROGMEM unsigned long CYCLE_LENGTH = (TOTAL_NODES+1) * TIME_SLOT; // total length of one cycle
 const PROGMEM int ERROR = 70;                                       // Transmission time error threshold
 const PROGMEM int ENERGY_CHANCE = 101;                               // energy harvest rate
-const PROGMEM unsigned long DELAY = 10000;                                    // The delay the node waits to burst send the packets (in ms)
+const PROGMEM unsigned long DELAY = 300000;                                    // The delay the node waits to burst send the packets (in ms)
 const PROGMEM int INTERVAL = 10;                                    // The delay for how fast the program sends the packets for burstSend
 //Setup data structures and global variables
 states state;

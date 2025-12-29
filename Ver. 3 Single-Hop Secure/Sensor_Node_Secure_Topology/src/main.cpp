@@ -1,14 +1,15 @@
 #include <Arduino.h>
 
 struct flags {
-  String ID = "03";
+  String ID = "02";
   long offset = 0;                        // Offset from the node's cycle to the global cycle
   long global_time = 0;                   // the time the previous node sent the message
   unsigned long time_in = 0;            // local arrival time, then converted to global arrival time, ideally the same as time_sent
   unsigned long time_in_U= 0;     // time in, but relative to the global time
   bool is_sync = 0;                      // Checks if a sync packet has been sent
   bool is_sent = 0;                      // Flag if a packet has been sent during it's transmission time
-  String data = "Node 03: Network 1"; // Random data sent by the node
+  bool is_data = 0;
+  String data = "Node 02: Network 3"; // Random data sent by the node
 };
 
 //Setup Ennumerations to Closely Match the FSM and Pseudocode
@@ -19,12 +20,12 @@ states state;
 flags myFlags;
 
 //Constants and Assumptions
-const String NODES[] = {"BB"};                                      //Hearable Nodes in the network. Single hop, so assume it can only hear from the base station
+const String NODES[] = {"BB", "01", "02", "03"};                                      //Hearable Nodes in the network. Single hop, so assume it can only hear from the base station
 const PROGMEM int TOTAL_NODES = 3;                                 // Total number of nodes in the network
-const PROGMEM int TIME_SLOT = 1000;                                  // amount of time per slot in milliseconds (ms) 10^-3
+const PROGMEM int TIME_SLOT = 500;                                  // amount of time per slot in milliseconds (ms) 10^-3
 const PROGMEM unsigned long CYCLE_LENGTH = (TOTAL_NODES+1) * TIME_SLOT; // total length of one cycle
 const PROGMEM int ERROR = 70;                                       // Transmission time error threshold
-const PROGMEM int ENERGY_CHANCE = 80;                               // energy harvest rate
+const PROGMEM int ENERGY_CHANCE = 40;                               // energy harvest rate
 const unsigned long TRANSMIT_TIME = (myFlags.ID.toInt() - 1) * TIME_SLOT +(TIME_SLOT / 2); // time in the cycle to transmit TRANSMIT_TIME
 
 //Function Definitions
@@ -44,6 +45,8 @@ void setup() {
   //Setup the serial to begin running over the air and makes sure that the timeout is set properly
   Serial.begin(9600);
   Serial.setTimeout(30);
+
+  randomSeed(analogRead(A0));
 
   state = DEAD;
 }
@@ -69,6 +72,7 @@ void baseFSM(){
         // Reset flags
         myFlags.is_sync = false;
         myFlags.is_sent = false;
+        myFlags.is_data = false;
         // Reset Timers
         myFlags.offset = 0;
         myFlags.global_time = 0;
@@ -78,10 +82,12 @@ void baseFSM(){
       }
     }
     case SYNC: {
+      myFlags.is_data = false;
+      myFlags.is_sync = false;
       receive();
-      if(myFlags.is_sync) {
+      if(myFlags.is_sync || myFlags.is_data) {
         // Send ACK
-        send(myFlags.ID + ":" + (String)cycleTime() + ":0" + ":1");
+        if(myFlags.is_sync) send(myFlags.ID + ":" + (String)cycleTime() + ":0" + ":1");
         myFlags.offset = (myFlags.global_time - (long) myFlags.time_in); // Add 50ms to account of processing timing
         if(myFlags.offset < 0) {
           myFlags.offset = (long) CYCLE_LENGTH + myFlags.offset;
@@ -143,10 +149,11 @@ bool receive() {
       if(isHearable(sender)) {
       myFlags.time_in = millis() % CYCLE_LENGTH;                    // Grab the correct values for the current time in terms of the Cycle Length
       myFlags.global_time = Serial.parseInt();                       // Turn the data from String to integer
-      Serial.readStringUntil(':');
+      //Serial.readStringUntil(':');
       myFlags.is_sync = Serial.parseInt();                           // Sync Flag
-      Serial.readStringUntil(':');                                   // ACK Flag
-      Serial.readStringUntil('\n');                                 // Data
+      bool ack = Serial.parseInt();                                   // ACK Flag
+      String data = Serial.readStringUntil('\n');                                 // Data
+      if (!myFlags.is_sync && !ack) myFlags.is_data = true;
       return true;
     }
   }

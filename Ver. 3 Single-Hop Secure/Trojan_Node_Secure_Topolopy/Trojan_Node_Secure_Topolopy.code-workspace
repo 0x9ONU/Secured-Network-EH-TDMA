@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "Sensor_Node_Secure_Topology",
+			"path": "../Sensor_Node_Secure_Topology"
+		}
+	],
+	"settings": {}
+}
