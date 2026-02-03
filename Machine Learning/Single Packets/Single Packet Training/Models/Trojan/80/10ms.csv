@@ -1,0 +1,6 @@
+row_number,Algorithm,Accuracy,Precision,Recall,F1-Score,KFold,ROC Curve
+0,Random Forest (4 n_estimators),1.0,1.0,1.0,1.0,1.0,1.0
+1,Naive Bayes (Gaussian),1.0,1.0,1.0,1.0,1.0,1.0
+2,KNN,1.0,1.0,1.0,1.0,1.0,1.0
+3,Logistic Regression,0.64275,1.0,0.16641666666666666,0.28534686004143744,0.6597857142857142,0.5832083333333333
+4,Support Vector Machine,0.64275,1.0,0.16641666666666666,0.28534686004143744,0.6597857142857142,0.5832083333333333
