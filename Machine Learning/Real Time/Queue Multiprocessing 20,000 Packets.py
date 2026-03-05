@@ -9,9 +9,9 @@ import time
 from datetime import datetime
 
 # --- CONFIGURATION ---
-SERIAL_PORT = '/dev/ttyUSB0' 
+SERIAL_PORT = 'COM8' 
 SYNC_PACKET = "BB:0:1:0"
-MODEL_PATH = 'KNN.sav'
+MODEL_PATH = 'Logistic_Regression.sav'
 FEATURES_PATH = 'Trojan_100_ALL_X_test.csv'
 NUM_PROCESSORS = 3  
 TARGET_PACKETS = 20000
