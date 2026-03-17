@@ -1,0 +1,82 @@
+SUMMARY REPORT: Trojan_100_ALL | KNN
+Total Packets Collected: 20000
+Total Flows Processed: 71
+--------------------------------------------------
+CONFUSION MATRIX:
+True Positives (TP):  50
+False Positives (FP): 21
+True Negatives (TN):  0
+False Negatives (FN): 0
+Overall Accuracy: 70.42%
+--------------------------------------------------
+2026-03-10 18:24:44 | Pred: 1 | Actual: 1 | File: flow_182444_853448.txt
+2026-03-10 18:31:17 | Pred: 1 | Actual: 1 | File: flow_183117_279819.txt
+2026-03-10 18:31:19 | Pred: 1 | Actual: 1 | File: flow_183119_281507.txt
+2026-03-10 18:36:01 | Pred: 1 | Actual: 1 | File: flow_183601_589589.txt
+2026-03-10 18:43:26 | Pred: 1 | Actual: 0 | File: flow_184326_128590.txt
+2026-03-10 18:45:56 | Pred: 1 | Actual: 1 | File: flow_184556_234895.txt
+2026-03-10 18:51:48 | Pred: 1 | Actual: 1 | File: flow_185148_616276.txt
+2026-03-10 18:55:32 | Pred: 1 | Actual: 1 | File: flow_185532_860825.txt
+2026-03-10 19:02:57 | Pred: 1 | Actual: 0 | File: flow_190257_383294.txt
+2026-03-10 19:04:55 | Pred: 1 | Actual: 1 | File: flow_190455_471025.txt
+2026-03-10 19:11:59 | Pred: 1 | Actual: 0 | File: flow_191159_952475.txt
+2026-03-10 19:18:12 | Pred: 1 | Actual: 1 | File: flow_191812_336089.txt
+2026-03-10 19:18:14 | Pred: 1 | Actual: 0 | File: flow_191814_338545.txt
+2026-03-10 19:18:42 | Pred: 1 | Actual: 1 | File: flow_191842_368855.txt
+2026-03-10 19:32:09 | Pred: 1 | Actual: 0 | File: flow_193209_293861.txt
+2026-03-10 19:39:07 | Pred: 1 | Actual: 0 | File: flow_193907_756965.txt
+2026-03-10 19:50:44 | Pred: 1 | Actual: 0 | File: flow_195044_490326.txt
+2026-03-10 19:50:50 | Pred: 1 | Actual: 1 | File: flow_195050_457205.txt
+2026-03-10 19:50:56 | Pred: 1 | Actual: 1 | File: flow_195056_465670.txt
+2026-03-10 19:51:02 | Pred: 1 | Actual: 1 | File: flow_195102_471534.txt
+2026-03-10 19:51:08 | Pred: 1 | Actual: 1 | File: flow_195108_476939.txt
+2026-03-10 19:53:16 | Pred: 1 | Actual: 1 | File: flow_195316_616165.txt
+2026-03-10 19:53:22 | Pred: 1 | Actual: 1 | File: flow_195322_623518.txt
+2026-03-10 19:53:28 | Pred: 1 | Actual: 1 | File: flow_195328_629672.txt
+2026-03-10 20:00:55 | Pred: 1 | Actual: 0 | File: flow_200055_167646.txt
+2026-03-10 20:01:01 | Pred: 1 | Actual: 1 | File: flow_200101_122060.txt
+2026-03-10 20:01:07 | Pred: 1 | Actual: 1 | File: flow_200107_128290.txt
+2026-03-10 20:01:13 | Pred: 1 | Actual: 1 | File: flow_200113_135369.txt
+2026-03-10 20:13:09 | Pred: 1 | Actual: 0 | File: flow_201309_967672.txt
+2026-03-10 20:13:15 | Pred: 1 | Actual: 1 | File: flow_201315_921520.txt
+2026-03-10 20:13:21 | Pred: 1 | Actual: 1 | File: flow_201321_928910.txt
+2026-03-10 20:13:27 | Pred: 1 | Actual: 1 | File: flow_201327_934757.txt
+2026-03-10 20:20:52 | Pred: 1 | Actual: 0 | File: flow_202052_472138.txt
+2026-03-10 20:20:58 | Pred: 1 | Actual: 1 | File: flow_202058_426703.txt
+2026-03-10 20:21:04 | Pred: 1 | Actual: 1 | File: flow_202104_431891.txt
+2026-03-10 20:21:10 | Pred: 1 | Actual: 1 | File: flow_202110_438718.txt
+2026-03-10 20:21:16 | Pred: 1 | Actual: 1 | File: flow_202116_444861.txt
+2026-03-10 20:21:22 | Pred: 1 | Actual: 1 | File: flow_202122_452546.txt
+2026-03-10 20:21:28 | Pred: 1 | Actual: 1 | File: flow_202128_458435.txt
+2026-03-10 20:28:53 | Pred: 1 | Actual: 0 | File: flow_202852_989417.txt
+2026-03-10 20:36:17 | Pred: 1 | Actual: 0 | File: flow_203617_470349.txt
+2026-03-10 20:43:39 | Pred: 1 | Actual: 0 | File: flow_204339_964956.txt
+2026-03-10 20:57:04 | Pred: 1 | Actual: 0 | File: flow_205704_844040.txt
+2026-03-10 20:57:10 | Pred: 1 | Actual: 1 | File: flow_205710_799720.txt
+2026-03-10 21:10:57 | Pred: 1 | Actual: 0 | File: flow_211057_761024.txt
+2026-03-10 21:18:24 | Pred: 1 | Actual: 0 | File: flow_211824_239910.txt
+2026-03-10 21:18:30 | Pred: 1 | Actual: 1 | File: flow_211830_195179.txt
+2026-03-10 21:31:39 | Pred: 1 | Actual: 0 | File: flow_213139_083098.txt
+2026-03-10 21:31:45 | Pred: 1 | Actual: 1 | File: flow_213145_062969.txt
+2026-03-10 21:39:07 | Pred: 1 | Actual: 0 | File: flow_213907_601128.txt
+2026-03-10 21:39:13 | Pred: 1 | Actual: 1 | File: flow_213913_552255.txt
+2026-03-10 21:39:19 | Pred: 1 | Actual: 1 | File: flow_213919_560608.txt
+2026-03-10 21:39:25 | Pred: 1 | Actual: 1 | File: flow_213925_566432.txt
+2026-03-10 21:39:31 | Pred: 1 | Actual: 1 | File: flow_213931_571550.txt
+2026-03-10 21:39:37 | Pred: 1 | Actual: 1 | File: flow_213937_579281.txt
+2026-03-10 21:47:02 | Pred: 1 | Actual: 0 | File: flow_214702_103149.txt
+2026-03-10 21:47:08 | Pred: 1 | Actual: 1 | File: flow_214708_070558.txt
+2026-03-10 21:47:14 | Pred: 1 | Actual: 1 | File: flow_214714_076720.txt
+2026-03-10 21:56:34 | Pred: 1 | Actual: 0 | File: flow_215634_734785.txt
+2026-03-10 21:56:40 | Pred: 1 | Actual: 1 | File: flow_215640_695412.txt
+2026-03-10 21:56:46 | Pred: 1 | Actual: 1 | File: flow_215646_702843.txt
+2026-03-10 21:56:52 | Pred: 1 | Actual: 1 | File: flow_215652_708729.txt
+2026-03-10 22:04:17 | Pred: 1 | Actual: 0 | File: flow_220417_258860.txt
+2026-03-10 22:04:23 | Pred: 1 | Actual: 1 | File: flow_220423_201155.txt
+2026-03-10 22:04:29 | Pred: 1 | Actual: 1 | File: flow_220429_208811.txt
+2026-03-10 22:04:35 | Pred: 1 | Actual: 1 | File: flow_220435_214018.txt
+2026-03-10 22:04:41 | Pred: 1 | Actual: 1 | File: flow_220441_222096.txt
+2026-03-10 22:04:47 | Pred: 1 | Actual: 1 | File: flow_220447_228173.txt
+2026-03-10 22:04:53 | Pred: 1 | Actual: 1 | File: flow_220453_235004.txt
+2026-03-10 22:04:59 | Pred: 1 | Actual: 1 | File: flow_220459_241937.txt
+2026-03-10 22:05:05 | Pred: 1 | Actual: 1 | File: flow_220505_246932.txt

@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../../PlatformIO/Projects/Receiver Test"
+		},
+		{
+			"name": "Sender Test",
+			"path": "../../../../../../PlatformIO/Projects/Sender Test"
+		},
+		{
+			"name": "handshake test",
+			"path": "../../../../../../PlatformIO/Projects/handshake test"
+		},
+		{
+			"name": "Base_Node_Secure_Topology",
+			"path": "../../Base_Node_Secure_Topology"
+		},
+		{
+			"name": "Sensor_Node_Secure_Topology",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}

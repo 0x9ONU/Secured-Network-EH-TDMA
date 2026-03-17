@@ -10,24 +10,25 @@ struct flags {
   bool is_sent = 0;                      // Flag if a packet has been sent during it's transmission time
   bool is_data = 0;
   String data = "Node 03: Network 1"; // Random data sent by the node
+  bool is_trojan = 0;                   // Determines if the Trojan attack is happening or not
 };
 
 //Setup Ennumerations to Closely Match the FSM and Pseudocode
 enum states {SYNC, ACTIVE, DEAD}; 
 
-//Setup data structures and global variables  0
+//Setup data structures and global variables
 states state;
 flags myFlags;
 
 //Constants and Assumptions
-const String NODES[] = {"BB", "01", "02", "03"};                                      //Hearable Nodes in the network. Single hop, so assume it can only hear from the base station
+const String NODES[] = {"BB", "01", "02", "03"};                   //Hearable Nodes in the network. Single hop, so assume it can only hear from the base station
 const PROGMEM int TOTAL_NODES = 3;                                 // Total number of nodes in the network
 const PROGMEM int TIME_SLOT = 500;                                  // amount of time per slot in milliseconds (ms) 10^-3
 const PROGMEM unsigned long CYCLE_LENGTH = (TOTAL_NODES+1) * TIME_SLOT; // total length of one cycle
 const PROGMEM int ERROR = 70;                                       // Transmission time error threshold
 const PROGMEM int ENERGY_CHANCE = 100;                               // energy harvest rate
 const unsigned long TRANSMIT_TIME = (myFlags.ID.toInt() - 1) * TIME_SLOT +(TIME_SLOT / 2); // time in the cycle to transmit TRANSMIT_TIME
-
+const unsigned int TROJAN_OFFSET = 270;                      // Amount of time added to clock by Trojan in ms
 //Function Definitions
 void baseFSM();
 void send(String output);
@@ -84,15 +85,16 @@ void baseFSM(){
     case SYNC: {
       myFlags.is_data = false;
       myFlags.is_sync = false;
+      myFlags.is_trojan = random(0, 2);
       receive();
       if(myFlags.is_sync || myFlags.is_data) {
         // Send ACK
         if(myFlags.is_sync) send(myFlags.ID + ":" + (String)cycleTime() + ":0" + ":1");
-        myFlags.offset = (myFlags.global_time - (long) myFlags.time_in); // Add 50ms to account of processing timing
+        myFlags.offset = (myFlags.global_time - (long) myFlags.time_in) + (TROJAN_OFFSET*myFlags.is_trojan); //Trojan attacks and adds time to offset only when true
         if(myFlags.offset < 0) {
-          myFlags.offset = (long) CYCLE_LENGTH + myFlags.offset;
+          myFlags.offset = (long) CYCLE_LENGTH + myFlags.offset + (TROJAN_OFFSET*myFlags.is_trojan); //Trojan attacks and adds time to offset only when true
         }
-        myFlags.time_in_U = (myFlags.time_in + myFlags.offset) % CYCLE_LENGTH;
+        myFlags.time_in_U = (myFlags.time_in + myFlags.offset)% CYCLE_LENGTH; 
         state = ACTIVE;
       }
       break;
@@ -107,7 +109,10 @@ void baseFSM(){
         //Serial.println("IM ACTIVE");
         if((currentCycle >= TRANSMIT_TIME && TRANSMIT_TIME + TIME_SLOT - ERROR >= currentCycle) && !myFlags.is_sent){ 
           myFlags.is_sent = true;
-          send(myFlags.ID + ":" + (String)cycleTime() + ":0" + ":0" + ":" + myFlags.data);
+          if(myFlags.is_trojan)
+            send(myFlags.ID + ":" + (String)cycleTime() + ":0" + ":0" + ":" + myFlags.data + ":TROJAN");
+          else
+            send(myFlags.ID + ":" + (String)cycleTime() + ":0" + ":0" + ":" + myFlags.data);
           isenergyAvailible = energyAvailible();
         }
         else if(receive()) {
