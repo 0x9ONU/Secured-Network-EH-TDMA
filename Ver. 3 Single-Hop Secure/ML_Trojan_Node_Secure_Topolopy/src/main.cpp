@@ -9,7 +9,7 @@ struct flags {
   bool is_sync = 0;                      // Checks if a sync packet has been sent
   bool is_sent = 0;                      // Flag if a packet has been sent during it's transmission time
   bool is_data = 0;
-  String data = "Node 03: Network 1"; // Random data sent by the node
+  String data = "Node 03: Network 4"; // Random data sent by the node
   bool is_trojan = 0;                   // Determines if the Trojan attack is happening or not
 };
 
@@ -26,9 +26,9 @@ const PROGMEM int TOTAL_NODES = 3;                                 // Total numb
 const PROGMEM int TIME_SLOT = 500;                                  // amount of time per slot in milliseconds (ms) 10^-3
 const PROGMEM unsigned long CYCLE_LENGTH = (TOTAL_NODES+1) * TIME_SLOT; // total length of one cycle
 const PROGMEM int ERROR = 70;                                       // Transmission time error threshold
-const PROGMEM int ENERGY_CHANCE = 100;                               // energy harvest rate
+const PROGMEM int ENERGY_CHANCE = 40;                               // energy harvest rate
 const unsigned long TRANSMIT_TIME = (myFlags.ID.toInt() - 1) * TIME_SLOT +(TIME_SLOT / 2); // time in the cycle to transmit TRANSMIT_TIME
-const unsigned int TROJAN_OFFSET = 270;                      // Amount of time added to clock by Trojan in ms
+const unsigned int TROJAN_OFFSET = 250;                      // Amount of time added to clock by Trojan in ms
 //Function Definitions
 void baseFSM();
 void send(String output);
@@ -85,9 +85,11 @@ void baseFSM(){
     case SYNC: {
       myFlags.is_data = false;
       myFlags.is_sync = false;
-      myFlags.is_trojan = random(0, 2);
       receive();
       if(myFlags.is_sync || myFlags.is_data) {
+        if (myFlags.is_sync) {
+          myFlags.is_trojan = random(0, 2);
+        }
         // Send ACK
         if(myFlags.is_sync) send(myFlags.ID + ":" + (String)cycleTime() + ":0" + ":1");
         myFlags.offset = (myFlags.global_time - (long) myFlags.time_in) + (TROJAN_OFFSET*myFlags.is_trojan); //Trojan attacks and adds time to offset only when true

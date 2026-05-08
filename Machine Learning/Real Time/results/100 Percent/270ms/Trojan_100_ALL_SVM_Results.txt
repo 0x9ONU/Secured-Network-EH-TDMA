@@ -1,0 +1,11 @@
+SUMMARY REPORT: Trojan_100_ALL | Model: SVM.savCOM26 | Port: 220ms | Delay: 270ms
+Total Packets Collected: 20000
+Total Flows Processed: 0
+--------------------------------------------------
+CONFUSION MATRIX:
+True Positives (TP):  0
+False Positives (FP): 0
+True Negatives (TN):  0
+False Negatives (FN): 0
+Overall Accuracy: 0.00%
+--------------------------------------------------

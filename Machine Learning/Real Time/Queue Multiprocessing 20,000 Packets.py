@@ -9,13 +9,25 @@ import time
 from datetime import datetime
 
 # --- CONFIGURATION ---
-SERIAL_PORT = 'COM4' 
+# Default values
+DEFAULT_MODEL_PATH = 'Naive_Bayes.sav'
+DEFAULT_SERIAL_PORT = 'COM4'
+DEFAULT_DELAY = '270ms'
+
+# Argument 1: Model Path
+MODEL_PATH = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_MODEL_PATH
+
+# Argument 2: Serial Port
+SERIAL_PORT = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_SERIAL_PORT
+
+# Argument 3: Delay (used for results directory naming)
+DELAY_VAL = sys.argv[3] if len(sys.argv) > 3 else DEFAULT_DELAY
+
 SYNC_PACKET = "BB:0:1:0"
-MODEL_PATH = 'Naive_Bayes.sav'
-FEATURES_PATH = 'Trojan_100_ALL_X_test.csv'
+FEATURES_PATH = 'Trojan_40_ALL_X_test.csv'
 NUM_PROCESSORS = 3  
 TARGET_PACKETS = 20000
-RESULTS_DIR = "results/270ms"
+RESULTS_DIR = os.path.join("results", DELAY_VAL)
 # ---------------------
 
 def calculate_interval_metrics(buffer, global_ref):
@@ -67,7 +79,6 @@ def process_txt_to_dataframe(input_file_path, worker_id):
             lines = f.readlines()
         
         for line in lines:
-            # Check for Ground Truth label in the raw packet
             if "TROJAN" in line:
                 is_actually_trojan = 1
 
@@ -91,7 +102,6 @@ def process_txt_to_dataframe(input_file_path, worker_id):
         print(f"[Processor {worker_id}] Error Parsing {input_file_path}: {e}")
         return None, 0
     
-    # Return both the feature dataframe and the ground truth label
     return (pd.DataFrame(interval_rows) if interval_rows else None), is_actually_trojan
 
 def data_collector(data_queue, stop_event):
@@ -99,9 +109,9 @@ def data_collector(data_queue, stop_event):
     if not os.path.exists("txt"): os.makedirs("txt")
     try:
         xbee = serial.Serial(port=SERIAL_PORT, baudrate=9600, timeout=1.0)
-        print(f"[Collector] Connected. Monitoring {SERIAL_PORT} for {TARGET_PACKETS} packets...")
+        print(f"[Collector] Connected to {SERIAL_PORT}. Monitoring for {TARGET_PACKETS} packets...")
     except Exception as e:
-        print(f"[Collector] Serial Error: {e}"); return
+        print(f"[Collector] Serial Error on {SERIAL_PORT}: {e}"); return
 
     total_packets_collected = 0
     session_buffer = []
@@ -131,8 +141,13 @@ def data_collector(data_queue, stop_event):
 
 def data_processor(data_queue, results_list, worker_id):
     """Task 2: Predicts anomalies and stores results vs ground truth."""
-    print(f"[Processor {worker_id}] Loading Model...")
-    model = joblib.load(MODEL_PATH)
+    print(f"[Processor {worker_id}] Loading Model: {MODEL_PATH}")
+    try:
+        model = joblib.load(MODEL_PATH)
+    except Exception as e:
+        print(f"[Processor {worker_id}] FAILED to load model: {e}")
+        return
+
     schema = pd.read_csv(FEATURES_PATH, nrows=0).columns.tolist()
     print(f"[Processor {worker_id}] Online.")
     
@@ -147,7 +162,6 @@ def data_processor(data_queue, results_list, worker_id):
             X = df.reindex(columns=schema).fillna(0)
             preds = model.predict(X)
             
-            # Logic: If any packet in this flow is predicted as 1, the flow is 'Predicted Trojan'
             pred_label = 1 if any(preds == 1) else 0
             
             results_list.append({
@@ -187,11 +201,10 @@ if __name__ == "__main__":
     # --- SAVE FINAL RESULTS & CALCULATE CONFUSION MATRIX ---
     if not os.path.exists(RESULTS_DIR): os.makedirs(RESULTS_DIR)
     
-    model_type = os.path.splitext(os.path.basename(MODEL_PATH))[0]
+    model_name = os.path.splitext(os.path.basename(MODEL_PATH))[0]
     feature_context = "_".join(os.path.basename(FEATURES_PATH).split("_")[:3])
-    final_path = os.path.join(RESULTS_DIR, f"{feature_context}_{model_type}_Results.txt")
+    final_path = os.path.join(RESULTS_DIR, f"{feature_context}_{model_name}_Results.txt")
 
-    # Confusion Matrix Tally
     tp = fp = tn = fn = 0
     for res in results_list:
         p, a = res['predicted'], res['actual']
@@ -204,7 +217,7 @@ if __name__ == "__main__":
     print(f"COLLECTION COMPLETE. Saving results to {final_path}...")
     
     with open(final_path, 'w') as f:
-        f.write(f"SUMMARY REPORT: {feature_context} | {model_type}\n")
+        f.write(f"SUMMARY REPORT: {feature_context} | Model: {MODEL_PATH} | Port: {SERIAL_PORT} | Delay: {DELAY_VAL}\n")
         f.write(f"Total Packets Collected: {TARGET_PACKETS}\n")
         f.write(f"Total Flows Processed: {len(results_list)}\n")
         f.write("-" * 50 + "\n")
@@ -221,7 +234,6 @@ if __name__ == "__main__":
         for res in results_list:
             f.write(f"{res['timestamp']} | Pred: {res['predicted']} | Actual: {res['actual']} | File: {res['file']}\n")
 
-    
     print(f"FINAL ACCURACY: {accuracy:.2%}")
     print(f"TP: {tp}, FP: {fp}, TN: {tn}, FN: {fn}")
     print("="*50)

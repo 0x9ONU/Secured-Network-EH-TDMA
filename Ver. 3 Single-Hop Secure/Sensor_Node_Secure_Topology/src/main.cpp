@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 struct flags {
-  String ID = "03";
+  String ID = "02";
   long offset = 0;                        // Offset from the node's cycle to the global cycle
   long global_time = 0;                   // the time the previous node sent the message
   unsigned long time_in = 0;            // local arrival time, then converted to global arrival time, ideally the same as time_sent
@@ -9,7 +9,7 @@ struct flags {
   bool is_sync = 0;                      // Checks if a sync packet has been sent
   bool is_sent = 0;                      // Flag if a packet has been sent during it's transmission time
   bool is_data = 0;
-  String data = "Node 03: Network 1"; // Random data sent by the node
+  String data = "Node 02: Network 5"; // Random data sent by the node
 };
 
 //Setup Ennumerations to Closely Match the FSM and Pseudocode
@@ -25,7 +25,7 @@ const PROGMEM int TOTAL_NODES = 3;                                 // Total numb
 const PROGMEM int TIME_SLOT = 500;                                  // amount of time per slot in milliseconds (ms) 10^-3
 const PROGMEM unsigned long CYCLE_LENGTH = (TOTAL_NODES+1) * TIME_SLOT; // total length of one cycle
 const PROGMEM int ERROR = 70;                                       // Transmission time error threshold
-const PROGMEM int ENERGY_CHANCE = 100;                               // energy harvest rate
+const PROGMEM int ENERGY_CHANCE = 40;                               // energy harvest rate
 const unsigned long TRANSMIT_TIME = (myFlags.ID.toInt() - 1) * TIME_SLOT +(TIME_SLOT / 2); // time in the cycle to transmit TRANSMIT_TIME
 
 //Function Definitions
