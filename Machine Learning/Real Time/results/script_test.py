@@ -100,4 +100,4 @@ def main():
     print(f"Files saved with descending order (100->80, 300ms->10ms).")
 
 if __name__ == "__main__":
-    main()d
+    main()

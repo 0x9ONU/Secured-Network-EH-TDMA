@@ -21,3 +21,5 @@ Energy (%),Trojan Offset,KNN,Logistic,Naive,Random,SVM
 80 Percent,80ms,1.0,0.0732,1.0,1.0,0.0
 80 Percent,40ms,1.0,0.0,1.0,1.0,0.0
 80 Percent,10ms,1.0,0.0231,1.0,1.0,0.0049
+40 Percent,300ms,0.8794,0.9495,1.0,0.6919,0.9263
+40 Percent,270ms,0.8592,0.944,1.0,0.795,0.9303
